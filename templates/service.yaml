@@ -15,5 +15,3 @@ spec:
     {{- include "victoriametrics.selectorLabels" . | nindent 4 }}
   sessionAffinity: None
   type: ClusterIP
-
-

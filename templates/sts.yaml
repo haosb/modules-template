@@ -5,12 +5,15 @@ metadata:
   namespace: victoria-module
   {{- include "helm_lib_module_labels" (list . (dict "app" "victoriametrics")) | nindent 2 }}
 spec:
-  podManagementPolicy: OrderedReady
   replicas: 1
   revisionHistoryLimit: 10
   selector:
-    {{- include "victoriametrics.selectorLabels" . | nindent 4 }}
+    matchLabels:
+      {{- include "victoriametrics.selectorLabels" . | nindent 6 }}
   template:
+    metadata:
+      labels:
+        {{- include "victoriametrics.labels" . | nindent 8 }}
     spec:
       automountServiceAccountToken: true
       containers:
@@ -23,7 +26,7 @@ spec:
         - --loggerFormat=json
         - --promscrape.config=/etc/prometheus/prometheus.yml
         - --promscrape.configCheckInterval=15s
-        image: victoriametrics/victoria-metrics:v1.88.1
+        image: {{ include "helm_lib_module_image" (list . "victoriametrics") }}
         imagePullPolicy: IfNotPresent
         livenessProbe:
           failureThreshold: 10
@@ -51,8 +54,6 @@ spec:
           successThreshold: 1
           timeoutSeconds: 5
         resources: {}
-        terminationMessagePath: /dev/termination-log
-        terminationMessagePolicy: File
         volumeMounts:
         - mountPath: /storage
           name: server-volume
@@ -61,11 +62,7 @@ spec:
         - mountPath: /etc/prometheus/
           name: prometheus-config-volume
       restartPolicy: Always
-      schedulerName: default-scheduler
-      securityContext: {}
-      serviceAccount: vm-victoria-metrics-single
-      serviceAccountName: vm-victoria-metrics-single
-      terminationGracePeriodSeconds: 60
+      serviceAccountName: victoriametrics
       volumes:
       - configMap:
           defaultMode: 420
@@ -75,20 +72,15 @@ spec:
           defaultMode: 420
           name: prometheus-server-conf
         name: prometheus-config-volume
-  updateStrategy:
-    rollingUpdate:
-      partition: 0
-    type: RollingUpdate
   volumeClaimTemplates:
   - apiVersion: v1
     kind: PersistentVolumeClaim
     metadata:
-      creationTimestamp: null
       name: server-volume
     spec:
       accessModes:
       - ReadWriteOnce
       resources:
         requests:
-          storage: 100Gi
+          storage: 20Gi
       volumeMode: Filesystem
