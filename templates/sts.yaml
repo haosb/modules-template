@@ -1,24 +1,15 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  labels:
-    app: server
-    app.kubernetes.io/instance: vm
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: victoria-metrics-single
-    helm.sh/chart: victoria-metrics-single-0.9.9
   name: vm-victoria-metrics-single-server
-  namespace: victoria-modules
+  namespace: victoria-module
+  {{- include "helm_lib_module_labels" (list . (dict "app" "victoriametrics")) | nindent 2 }}
 spec:
   podManagementPolicy: OrderedReady
   replicas: 1
   revisionHistoryLimit: 10
   selector:
-    matchLabels:
-      app: server
-      app.kubernetes.io/instance: vm
-      app.kubernetes.io/name: victoria-metrics-single
-  serviceName: vm-victoria-metrics-single-server
+    {{- include "victoriametrics.selectorLabels" . | nindent 4 }}
   template:
     spec:
       automountServiceAccountToken: true
