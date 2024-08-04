@@ -5,6 +5,7 @@
 - [ ] Helm things...
 - [ ] Can I easily deploy module to registry?
 - [ ] Can I easily enable module in Deckhouse without problems with pulling?
+- [ ] Use OpenApi, Hooks
 
 After module deploys in cluster:
 - [ ] VictoriaMetrics can scrape targets? Or I need to modify SA and Roles?

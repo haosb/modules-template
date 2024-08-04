@@ -20,7 +20,6 @@ spec:
       - args:
         - --retentionPeriod=1
         - --storageDataPath=/storage
-        - -promscrape.config=/scrapeconfig/scrape.yml
         - --envflag.enable=true
         - --envflag.prefix=VM_
         - --loggerFormat=json
@@ -53,21 +52,14 @@ spec:
           periodSeconds: 15
           successThreshold: 1
           timeoutSeconds: 5
-        resources: {}
         volumeMounts:
         - mountPath: /storage
           name: server-volume
-        - mountPath: /scrapeconfig
-          name: scrapeconfig
         - mountPath: /etc/prometheus/
           name: prometheus-config-volume
       restartPolicy: Always
       serviceAccountName: victoriametrics
       volumes:
-      - configMap:
-          defaultMode: 420
-          name: vm-victoria-metrics-single-server-scrapeconfig
-        name: scrapeconfig
       - configMap:
           defaultMode: 420
           name: prometheus-server-conf
