@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: vm-victoria-metrics-single-server
-  namespace: victoria-module
+  namespace: victoria-modules
   {{- include "helm_lib_module_labels" (list . (dict "app" "victoriametrics")) | nindent 2 }}
 spec:
   replicas: 1
